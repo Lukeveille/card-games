@@ -1,17 +1,28 @@
 import React from 'react';
 import Card from './Card.js';
+import { useState } from 'react';
 
-const deck = [];
-for (let i = 0; i < 52; i++) {
-  const suite = i  > 38? 'C' : i > 25? 'S' : i > 12? 'D' : 'H';
-  const value = i  > 38? i - 39 : i > 25? i - 26 : i > 12? i - 13 : i;
+export default props => {
+  const [deck] = useState(props.newDeck),
+  [cardInDeck, setCardInDeck] = useState(0),
+  shuffle = a => {
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  };
+  shuffle(deck);
+
+  // useEffect(() => {
+  //   console.log(cardInDeck);
+  // }, [setCardInDeck])
   
-  deck.push([value + 1, suite])
-}
-
-export default () => {
-  const choice = deck[Math.floor(Math.random() * deck.length)];
   return (
-    <Card value={choice}/>
+    <Card
+      value={deck[cardInDeck]}
+      setCardInDeck={setCardInDeck}
+      cardInDeck={cardInDeck}
+    />
   )
-}
+};

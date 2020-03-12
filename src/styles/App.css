@@ -7,3 +7,7 @@ body {
   margin: 5em;
   position: relative;
 }
+
+.card:hover {
+  box-shadow: 0 0 1em #ff0;
+}
