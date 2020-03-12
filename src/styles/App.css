@@ -1,0 +1,9 @@
+body {
+  text-align: center;
+  background: linear-gradient(90deg, rgba(19,121,9,1) 0%, rgba(12,50,9,1) 100%);
+}
+
+.Gameboard {
+  margin: 5em;
+  position: relative;
+}
