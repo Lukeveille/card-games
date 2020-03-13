@@ -2,12 +2,11 @@ body {
   text-align: center;
   background: linear-gradient(90deg, rgba(19,121,9,1) 0%, rgba(12,50,9,1) 100%);
 }
+p {
+  margin: .2em;
+}
 
 .Gameboard {
   margin: 5em;
   position: relative;
-}
-
-.card:hover {
-  box-shadow: 0 0 1em #ff0;
 }
