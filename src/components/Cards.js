@@ -27,10 +27,11 @@ export default props => {
   shuffle(deck);
   
   return (
-    <div>
-      {deck.map((card, i) => {
-        return <Card key={`card${i}`} active={true} value={card} scale={.5}/>
-      })}
-    </div>
+    // <div>
+    //   {deck.map((card, i) => {
+    //     return <Card key={`card${i}`} active={true} value={card} scale={1}/>
+    //   })}
+    // </div>
+    <Card active={true} value={[4, 'H']} scale={1}/>
   )
 };
