@@ -48,7 +48,8 @@ export default props => {
     display: 'grid',
     gridTemplateColumns: '1fr 3fr 1fr'
   },
-  suiteImage = (size, flip) => <img 
+  suiteImage = (size, flip, num = 0) => <img 
+    key={`${num}img`}
     src={suit}
     alt='suit'
     style = {{
@@ -59,11 +60,30 @@ export default props => {
   suiteGrid = () => {
     let arr = [];
     for (let i = 0; i < props.value[0]; i++) {
-      const num = props.value[0] % 2? i : i+1,
+      const num = props.value[0] === 4 || props.value[0] === 10? i+1 : props.value[0] === 7? i-1 : i,
       flip = num > (props.value[0] / 2)? true : false;
-      arr.push(suiteImage(1, flip))
+      arr.push(suiteImage(1, flip, i))
     }
-    return arr;
+    if (props.value[0] < 4) {
+      return arr;
+    } else {
+      let count = 0,
+      newArr = [];
+      while (arr.length > 0) {
+        newArr[count] = <div key={`${props.value[1]}row${count}`} style={{display: 'flex', justifyContent: 'space-around'}}>
+
+          {(props.value[0] !== 4 && props.value[0] !== 6 && props.value[0] !== 9 && props.value[0] !== 10 && (count+2) % 2)?
+          props.value[0] === 7 && count !== 1?
+          arr.splice(0,2) :
+          arr.splice(0,1) :
+          (props.value[0] === 9 & count === 2) || (props.value[0] === 10 & count === 1) || (props.value[0] === 10 & count === 4)?
+          arr.splice(0,1) : arr.splice(0,2)}
+
+        </div>
+        count++
+      }
+      return newArr;
+    }
   },
   cardSuite = style => <div style={style}>
     <p style={suitStyle}>{number}</p>
@@ -90,9 +110,10 @@ export default props => {
         {cardSuite({textAlign: 'left'})}
         <div style={{
           display: 'flex',
-          justifyContent: 'space-around',
+          justifyContent: props.value[0] === 1 || props.value[0] > 10? 'space-around' : 'space-between',
           alignItems: 'center',
-          flexFlow: 'column wrap'
+          flexFlow: 'column wrap',
+          margin: '.5em 0'
         }}>
           {props.value[0] === 1? suiteImage(3) : suiteFace}
         </div>
