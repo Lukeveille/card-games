@@ -57,15 +57,15 @@ export default props => {
       transform: flip? 'rotateX(180deg)' : 'none'
     }}
   />,
-  spacer = <samp style={{display: 'absolute', width: '2.5rem', height: '1.5rem'}}></samp>,
+  spacer = (num = 0) => (<samp  key={`spacer${num}`} style={{width: `${props.scale * 2.5}rem`, height: `${props.scale * 1.5}rem`}}></samp>),
   wideRow = arr => {
-    arr.splice(1, 0, spacer);
+    arr.splice(1, 0, spacer());
     return arr;
   },
   suiteGrid = () => {
     let arr = [];
     for (let i = 0; i < props.value[0]; i++) {
-      const num = props.value[0] === 4 || props.value[0] === 10? i+1 : props.value[0] === 7? i-1 : i,
+      const num = props.value[0] === 2 || props.value[0] === 4 || props.value[0] === 10? i+1 : props.value[0] === 7? i-1 : i,
       flip = num > (props.value[0] / 2)? true : false;
       arr.push(suiteImage(1, flip, i))
     }
@@ -79,7 +79,7 @@ export default props => {
         (props.value[0] === 9 && count === 1) ||
         (props.value[0] === 9 && count === 5) ||
         (props.value[0] === 10 && count === 3)?
-        spacer
+        spacer(count)
         :
         <div key={`${props.value[1]}row${count}`} style={{display: 'flex', justifyContent: 'space-around'}}>
           {(props.value[0] !== 4 && props.value[0] !== 6 && props.value[0] !== 9 && props.value[0] !== 10 && (count+2) % 2)?
@@ -122,7 +122,7 @@ export default props => {
           justifyContent: props.value[0] === 1 || props.value[0] > 10? 'space-around' : 'space-between',
           alignItems: 'center',
           flexFlow: 'column wrap',
-          margin: '.5em 0'
+          margin: `${props.scale * 1}rem 0`
         }}>
           {props.value[0] === 1? suiteImage(3) : suiteFace}
         </div>
