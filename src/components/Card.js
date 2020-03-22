@@ -4,9 +4,21 @@ import heart from '../svg/heart.svg'
 import diamond from '../svg/diamond.svg'
 import spade from '../svg/spade.svg'
 import club from '../svg/club.svg'
+import heartQueen from '../svg/queen_of_hearts.svg';
+import diamondQueen from '../svg/queen_of_diamonds.svg';
+import spadeQueen from '../svg/queen_of_spades.svg';
+import clubQueen from '../svg/queen_of_clubs.svg';
+import heartKing from '../svg/king_of_hearts.svg';
+import diamondKing from '../svg/king_of_diamonds.svg';
+import spadeKing from '../svg/king_of_spades.svg';
+import clubKing from '../svg/king_of_clubs.svg';
+import heartJack from '../svg/jack_of_hearts.svg';
+import diamondJack from '../svg/jack_of_diamonds.svg';
+import spadeJack from '../svg/jack_of_spades.svg';
+import clubJack from '../svg/jack_of_clubs.svg';
 
 export default props => {
-  const [flipped, setFlipped] = useState(true),
+  const [flipped, setFlipped] = useState(false),
   [glow, setGlow] = useState(false),
   innerWidth = props.scale * 9,
   innerHeight = props.scale * 14,
@@ -94,14 +106,35 @@ export default props => {
       return newArr;
     }
   },
-  cardSuite = style => <div style={style}>
+  cardSuite = style => (<div style={style}>
     <p style={suitStyle}>{number}</p>
     {suiteImage(1.5)}
-  </div>,
-  faceCard = 'FACE',
+  </div>),
+  faceCard = () => {
+    const face = props.value[0] === 11? props.value[1] === 'H'?
+    heartJack :
+    props.value[1] === 'D'?
+    diamondJack :
+    props.value[1] === 'S'?
+    spadeJack : clubJack :
+    props.value[0] === 12?  props.value[1] === 'H'?
+    heartQueen :
+    props.value[1] === 'D'?
+    diamondQueen :
+    props.value[1] === 'S'?
+    spadeQueen : clubQueen :
+    props.value[1] === 'H'?
+    heartKing :
+    props.value[1] === 'D'?
+    diamondKing :
+    props.value[1] === 'S'?
+    spadeKing : clubKing;
+
+    return <img src={face} alt='help' style={{position: 'absolute', height: '76%'}} />
+  },
   suiteFace = props.value[0] < 11?
   suiteGrid()
-  : faceCard;
+  : faceCard();
 
   return (
     <div
@@ -122,7 +155,7 @@ export default props => {
           justifyContent: props.value[0] === 1 || props.value[0] > 10? 'space-around' : 'space-between',
           alignItems: 'center',
           flexFlow: 'column wrap',
-          margin: `${props.scale * 1}rem 0`
+          margin: `${props.scale * 2}rem 0`
         }}>
           {props.value[0] === 1? suiteImage(3) : suiteFace}
         </div>
