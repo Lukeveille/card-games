@@ -18,7 +18,7 @@ import spadeJack from '../svg/jack_of_spades.svg';
 import clubJack from '../svg/jack_of_clubs.svg';
 
 export default props => {
-  const [flipped, setFlipped] = useState(true),
+  const [flipped, setFlipped] = useState(false),
   [glow, setGlow] = useState(false),
   innerWidth = props.scale * 9,
   innerHeight = props.scale * 14,
@@ -150,11 +150,9 @@ export default props => {
         </div>
         {cardSuite({
           textAlign: 'right',
-          transform: 'rotateX(180deg)',
-          bottom: '0',
-          right: '0',
+          transform: 'rotateX(180deg)'
         })}
       </figure>
     </div>
-  )
-}
+  );
+};
