@@ -57,6 +57,11 @@ export default props => {
       transform: flip? 'rotateX(180deg)' : 'none'
     }}
   />,
+  spacer = <samp style={{display: 'absolute', width: '2.5rem', height: '1.5rem'}}></samp>,
+  wideRow = arr => {
+    arr.splice(1, 0, spacer);
+    return arr;
+  },
   suiteGrid = () => {
     let arr = [];
     for (let i = 0; i < props.value[0]; i++) {
@@ -70,15 +75,19 @@ export default props => {
       let count = 0,
       newArr = [];
       while (arr.length > 0) {
-        newArr[count] = <div key={`${props.value[1]}row${count}`} style={{display: 'flex', justifyContent: 'space-around'}}>
-
+        newArr[count] = (props.value[0] === 7 && count === 3) ||
+        (props.value[0] === 9 && count === 1) ||
+        (props.value[0] === 9 && count === 5) ||
+        (props.value[0] === 10 && count === 3)?
+        spacer
+        :
+        <div key={`${props.value[1]}row${count}`} style={{display: 'flex', justifyContent: 'space-around'}}>
           {(props.value[0] !== 4 && props.value[0] !== 6 && props.value[0] !== 9 && props.value[0] !== 10 && (count+2) % 2)?
           props.value[0] === 7 && count !== 1?
-          arr.splice(0,2) :
+          wideRow(arr.splice(0,2)) :
           arr.splice(0,1) :
-          (props.value[0] === 9 & count === 2) || (props.value[0] === 10 & count === 1) || (props.value[0] === 10 & count === 4)?
-          arr.splice(0,1) : arr.splice(0,2)}
-
+          (props.value[0] === 9 & count === 3) || (props.value[0] === 10 & count === 1) || (props.value[0] === 10 & count === 5)?
+          arr.splice(0,1) : wideRow(arr.splice(0,2))}
         </div>
         count++
       }

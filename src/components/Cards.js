@@ -29,7 +29,7 @@ export default props => {
   return (
     <div>
       {deck.map((card, i) => {
-        return <Card key={`card${i}`} active={true} value={card} scale={.5}/>
+        return <Card key={`card${i}`} active={true} value={card} scale={1}/>
       })}
       {/* <Card active={true} value={[2, 'H']} scale={1}/> */}
     </div>
