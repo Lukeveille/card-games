@@ -18,7 +18,7 @@ import spadeJack from '../svg/jack_of_spades.svg';
 import clubJack from '../svg/jack_of_clubs.svg';
 
 export default props => {
-  const [flipped, setFlipped] = useState(false),
+  const [flipped, setFlipped] = useState(true),
   [glow, setGlow] = useState(false),
   innerWidth = props.scale * 9,
   innerHeight = props.scale * 14,
@@ -77,31 +77,26 @@ export default props => {
   suiteGrid = () => {
     let arr = [];
     for (let i = 0; i < props.value[0]; i++) {
-      const num = props.value[0] === 2 || props.value[0] === 4 || props.value[0] === 10? i+1 : props.value[0] === 7? i-1 : i,
-      flip = num > (props.value[0] / 2)? true : false;
-      arr.push(suiteImage(1, flip, i))
+      const num = props.value[0] === 2 || props.value[0] === 4 || props.value[0] === 10? i+1 : props.value[0] === 7? i-1 : i;
+      arr.push(suiteImage(1, num > (props.value[0] / 2), i));
     }
     if (props.value[0] < 4) {
       return arr;
     } else {
-      let count = 0,
+      let row = 0,
       newArr = [];
       while (arr.length > 0) {
-        newArr[count] = (props.value[0] === 7 && count === 3) ||
-        (props.value[0] === 9 && count === 1) ||
-        (props.value[0] === 9 && count === 5) ||
-        (props.value[0] === 10 && count === 3)?
-        spacer(count)
+        newArr[row] = ((props.value[0] === 7 || props.value[0] === 10) && row === 3) ||
+        (props.value[0] === 9 && (row === 5 || row === 1))?
+        spacer(row)
         :
-        <div key={`${props.value[1]}row${count}`} style={{display: 'flex', justifyContent: 'space-around'}}>
-          {(props.value[0] !== 4 && props.value[0] !== 6 && props.value[0] !== 9 && props.value[0] !== 10 && (count+2) % 2)?
-          props.value[0] === 7 && count !== 1?
-          wideRow(arr.splice(0,2)) :
-          arr.splice(0,1) :
-          (props.value[0] === 9 & count === 3) || (props.value[0] === 10 & count === 1) || (props.value[0] === 10 & count === 5)?
+        <div key={`${props.value[1]}row${row}`} style={{display: 'flex', justifyContent: 'space-around'}}>
+          {((props.value[0] === 5 || props.value[0] === 7 || props.value[0] === 8 || props.value[0] === 10) && row === 1) ||
+          ((props.value[0] === 8 || props.value[0] === 9) && row === 3) ||
+          (props.value[0] === 10 && row === 5)?
           arr.splice(0,1) : wideRow(arr.splice(0,2))}
         </div>
-        count++
+        row++
       }
       return newArr;
     }
@@ -132,9 +127,7 @@ export default props => {
 
     return <img src={face} alt='help' style={{position: 'absolute', height: '76%'}} />
   },
-  suiteFace = props.value[0] < 11?
-  suiteGrid()
-  : faceCard();
+  suiteFace = props.value[0] < 11? suiteGrid() : faceCard();
 
   return (
     <div
@@ -143,16 +136,12 @@ export default props => {
       onMouseOut={() => { setGlow(false) }}
       onClick={() => { setGlow(false); setFlipped(true) }}
     >
-      <figure
-        style={cardBack}
-      ></figure>
-      <figure
-        style={cardFace}
-      >
+      <figure style={cardBack}></figure>
+      <figure style={cardFace}>
         {cardSuite({textAlign: 'left'})}
         <div style={{
           display: 'flex',
-          justifyContent: props.value[0] === 1 || props.value[0] > 10? 'space-around' : 'space-between',
+          justifyContent:  props.value[0] === 1? 'center' : 'space-between',
           alignItems: 'center',
           flexFlow: 'column wrap',
           margin: `${props.scale * 2}rem 0`
@@ -162,8 +151,8 @@ export default props => {
         {cardSuite({
           textAlign: 'right',
           transform: 'rotateX(180deg)',
-          bottom: '1px',
-          right: '1px',
+          bottom: '0',
+          right: '0',
         })}
       </figure>
     </div>
