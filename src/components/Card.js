@@ -1,5 +1,5 @@
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import heart from '../svg/heart.svg'
 import diamond from '../svg/diamond.svg'
 import spade from '../svg/spade.svg'
@@ -18,11 +18,18 @@ import spadeJack from '../svg/jack_of_spades.svg';
 import clubJack from '../svg/jack_of_clubs.svg';
 
 export default props => {
-  const [flipped, setFlipped] = useState(false),
+  const [flipped, setFlipped] = useState(props.flipped),
+  [active, setActive] = useState(props.active),
+  [live, setLive] = useState(props.live),
   [glow, setGlow] = useState(false),
-  innerWidth = props.scale * 9,
-  innerHeight = props.scale * 14,
+  [grabbed, setGrabbed] = useState(false),
+  [rel, setRel] = useState(null),
+  [pos, setPos] = useState({x: null, y: null}),
   border = props.scale * .8,
+  innerWidth = props.scale * 9,
+  width = innerWidth + border * 2,
+  innerHeight = props.scale * 14,
+  height = innerHeight + border * 2,
   number = props.value[0] === 1? 'A' : props.value[0] === 11? 'J' : props.value[0] === 12? 'Q' : props.value[0] === 13? 'K' : props.value[0],
   suit = props.value[1] === 'H'? heart : props.value[1] === 'D'? diamond : props.value[1] === 'S'? spade : club,
   suitStyle = {
@@ -31,16 +38,18 @@ export default props => {
     color: props.value[1] === 'D' || props.value[1] === 'H'? '#c00' : '#000'
   },
   cardWrapper = {
-    width: `${innerWidth + border * 2}rem`,
-    height: `${innerHeight + border * 2}rem`,
+    ...props.style,
+    width: `${width}rem`,
+    height: `${height}rem`,
     borderRadius: `${props.scale * 10}px`,
-    display: 'inline-block',
-    position: 'relative',
     transition: 'transform .2s ease-in-out',
     transformStyle: 'preserve-3d',
     transform: flipped? 'rotateY(180deg)' : 'none',
     boxShadow: glow? '0 0 1em #ff0' : '0 0 1em #000',
-    zIndex: glow? '10000' : 'auto'
+    cursor: !flipped && active? 'pointer' : grabbed && active? 'grabbing' : props.live && active? 'grab' : 'default',
+    zIndex: glow? '10000' : 'auto',
+    top: `${pos.y}px`,
+    left: `${pos.x}px`
   },
   cardBack = {
     width: `${innerWidth}rem`,
@@ -49,7 +58,6 @@ export default props => {
     borderRadius: `${props.scale * 10}px`,
     margin: 'auto',
     background: '#a00',
-    cursor: glow? 'pointer' : 'default',
     position: 'absolute',
     backfaceVisibility: 'hidden'
   },
@@ -129,12 +137,59 @@ export default props => {
   },
   suiteFace = props.value[0] < 11? suiteGrid() : faceCard();
 
+  useEffect(() => {
+    setActive(props.active)
+  }, [props.active])
+  useEffect(() => {
+    setLive(props.live)
+  }, [props.live])
+  useEffect(() => {
+    setFlipped(props.flipped)
+  }, [props.flipped])
+
   return (
     <div
       style={cardWrapper}
-      onMouseOver={() => { if (!flipped && props.active) setGlow(true) }}
-      onMouseOut={() => { setGlow(false) }}
-      onClick={() => { setGlow(false); setFlipped(true) }}
+      onMouseOver={() => {
+        if ((!flipped && active) || (active && live)) {
+          setGlow(true);
+        }
+      }}
+      onMouseDown={e => {
+        if ((flipped && active && live)) {
+          const pos = e.target.getBoundingClientRect();
+          setGrabbed(!grabbed);
+          setRel({
+            x: e.pageX - pos.x,
+            y: e.pageY - pos.y,
+          });
+          e.stopPropagation();
+          e.preventDefault();
+        }
+      }}
+      onMouseUp={e => {
+        // setGrabbed(false);
+        e.stopPropagation();
+        e.preventDefault();
+      }}
+      onMouseMove={e => {
+        if (!grabbed) return
+        console.log(pos)
+        console.log(rel)
+        setPos({
+          x: e.pageX - rel.x,
+          y: e.pageY - rel.y
+        })
+      }}
+      onMouseOut={() => { setGlow(false); setGrabbed(false) }}
+      onClick={() => {
+        if (!props.live) {
+          setGlow(false)
+        }
+        if (props.active) {
+          setFlipped(true)
+        }
+      }}
     >
       <figure style={cardBack}></figure>
       <figure style={cardFace}>

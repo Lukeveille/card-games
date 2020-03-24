@@ -5,8 +5,11 @@ body {
 p {
   margin: .2em;
 }
+button {
+  margin: 1rem;
+}
 
 .Gameboard {
-  margin: 5em;
+  margin: 2rem;
   position: relative;
 }
