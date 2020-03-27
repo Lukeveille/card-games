@@ -25,6 +25,7 @@ export default props => {
   [grabbed, setGrabbed] = useState(false),
   [rel, setRel] = useState(null),
   [pos, setPos] = useState({x: null, y: null}),
+  [zindex, setZindex] = useState(props.zindex),
   border = props.scale * .8,
   innerWidth = props.scale * 9,
   width = innerWidth + border * 2,
@@ -45,9 +46,9 @@ export default props => {
     transition: 'transform .2s ease-in-out',
     transformStyle: 'preserve-3d',
     transform: flipped? 'rotateY(180deg)' : 'none',
-    boxShadow: glow? '0 0 1em #ff0' : '0 0 1em #000',
+    boxShadow: grabbed? `0 0 ${props.scale * 1}rem #000` : glow? `0 0 ${props.scale * .5}rem #000` : `0 0 ${props.scale * .25}rem #000`,
     cursor: !flipped && active? 'pointer' : grabbed && active? 'grabbing' : props.live && active? 'grab' : 'default',
-    zIndex: glow? '10000' : 'auto',
+    zIndex: glow? '100000' : zindex,
     top: `${pos.y}px`,
     left: `${pos.x}px`
   },
@@ -157,31 +158,40 @@ export default props => {
       }}
       onMouseDown={e => {
         if ((flipped && active && live)) {
-          const pos = e.target.getBoundingClientRect();
+          const pos = e.currentTarget.getBoundingClientRect();
           setGrabbed(!grabbed);
           setRel({
             x: e.pageX - pos.x,
             y: e.pageY - pos.y,
           });
+          if (zindex !== props.topCard) {
+            props.setTopCard(props.topCard + 1);
+            setZindex(props.topCard);
+          }
           e.stopPropagation();
           e.preventDefault();
         }
       }}
       onMouseUp={e => {
-        // setGrabbed(false);
-        e.stopPropagation();
-        e.preventDefault();
+        if (grabbed) {
+          setGrabbed(false);
+          setGlow(true)
+          e.stopPropagation();
+          e.preventDefault();
+        }
       }}
       onMouseMove={e => {
         if (!grabbed) return
-        console.log(pos)
-        console.log(rel)
         setPos({
           x: e.pageX - rel.x,
           y: e.pageY - rel.y
         })
       }}
-      onMouseOut={() => { setGlow(false); setGrabbed(false) }}
+      onMouseOut={() => {
+        if (glow) {
+          setGlow(false);
+        }
+      }}
       onClick={() => {
         if (!props.live) {
           setGlow(false)

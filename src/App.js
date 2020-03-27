@@ -3,29 +3,45 @@ import { useState } from 'react';
 import './styles/App.css';
 import Card from './components/Card.js'
 
-const newDeck = [];
-for (let i = 0; i < 52; i++) {
-  const suite = i  > 38? 'C' : i > 25? 'S' : i > 12? 'D' : 'H';
-  const value = i  > 38? i - 39 : i > 25? i - 26 : i > 12? i - 13 : i;
-  newDeck.push([value + 1, suite])
-};
-// const shuffle = a => {
-//   for (let i = a.length - 1; i > 0; i--) {
-//       const j = Math.floor(Math.random() * (i + 1));
-//       [a[i], a[j]] = [a[j], a[i]];
-//   }
-//   return a;
-// };
-// shuffle(newDeck);
-
 function App() {
   const [act, setAct] = useState(true),
+  deck = [],
+  [topCard, setTopCard] = useState(52),
   [live, setLive] = useState(true),
-  [flip, setFlip] = useState(true);
+  [flip, setFlip] = useState(false);
+
+  if (!deck.length) {
+    for (let i = 0; i < 52; i++) {
+      const value = (i  > 38? i - 39 : i > 25? i - 26 : i > 12? i - 13 : i)+1;
+      const suite = i  > 38? 'C' : i > 25? 'S' : i > 12? 'D' : 'H';
+      deck.push(
+        <Card
+          key={`card${i}`}
+          style={{
+            display: 'inline-block',
+            position: 'absolute',
+          }}
+          active={act}
+          live={live}
+          flipped={flip}
+          zindex={i}
+          topCard={topCard}
+          setTopCard={setTopCard}
+          value={[(value), suite]}
+          scale={.5}
+        />)
+    }
+  }
 
   return (
-    // <div className="Gameboard">
-    <div>
+    <div
+    style={{
+      position: 'absolute',
+      width: '100%',
+      height: '100%',
+      background: 'linear-gradient(90deg, rgba(19,121,9,1) 0%, rgba(12,50,9,1) 100%)'
+    }}
+    >
       <button
         onClick={() => {
           setAct(!act)
@@ -41,21 +57,9 @@ function App() {
           setFlip(!flip)
         }}
       >{`${flip? `un` : ``}flip all`}</button>
+
       <div id="deck">
-        {newDeck.map((card, i) => {
-          return <Card
-            key={`card${i}`}
-            style={{
-              display: 'inline-block',
-              position: 'absolute',
-            }}
-            active={act}
-            live={live}
-            flipped={flip}
-            value={card}
-            scale={1}
-          />
-        })}
+        {deck}
       </div>
     </div>
   );
