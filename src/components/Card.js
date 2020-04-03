@@ -4,6 +4,10 @@ import heart from '../svg/heart.svg'
 import diamond from '../svg/diamond.svg'
 import spade from '../svg/spade.svg'
 import club from '../svg/club.svg'
+import heartJack from '../svg/jack_of_hearts.svg';
+import diamondJack from '../svg/jack_of_diamonds.svg';
+import spadeJack from '../svg/jack_of_spades.svg';
+import clubJack from '../svg/jack_of_clubs.svg';
 import heartQueen from '../svg/queen_of_hearts.svg';
 import diamondQueen from '../svg/queen_of_diamonds.svg';
 import spadeQueen from '../svg/queen_of_spades.svg';
@@ -12,10 +16,6 @@ import heartKing from '../svg/king_of_hearts.svg';
 import diamondKing from '../svg/king_of_diamonds.svg';
 import spadeKing from '../svg/king_of_spades.svg';
 import clubKing from '../svg/king_of_clubs.svg';
-import heartJack from '../svg/jack_of_hearts.svg';
-import diamondJack from '../svg/jack_of_diamonds.svg';
-import spadeJack from '../svg/jack_of_spades.svg';
-import clubJack from '../svg/jack_of_clubs.svg';
 
 export default props => {
   const [flipped, setFlipped] = useState(props.flipped),
@@ -25,7 +25,6 @@ export default props => {
   [grabbed, setGrabbed] = useState(false),
   [rel, setRel] = useState(null),
   [pos, setPos] = useState({x: null, y: null}),
-  [zindex, setZindex] = useState(props.zindex),
   border = props.scale * .8,
   innerWidth = props.scale * 9,
   width = innerWidth + border * 2,
@@ -48,7 +47,7 @@ export default props => {
     transform: flipped? 'rotateY(180deg)' : 'none',
     boxShadow: grabbed? `0 0 ${props.scale * 1}rem #000` : glow? `0 0 ${props.scale * .5}rem #000` : `0 0 ${props.scale * .25}rem #000`,
     cursor: !flipped && active? 'pointer' : grabbed && active? 'grabbing' : props.live && active? 'grab' : 'default',
-    zIndex: glow? '100000' : zindex,
+    zIndex: glow? '100000' : 'default',
     top: `${pos.y}px`,
     left: `${pos.x}px`
   },
@@ -164,10 +163,6 @@ export default props => {
             x: e.pageX - pos.x,
             y: e.pageY - pos.y,
           });
-          if (zindex !== props.topCard) {
-            props.setTopCard(props.topCard + 1);
-            setZindex(props.topCard);
-          }
           e.stopPropagation();
           e.preventDefault();
         }
@@ -187,9 +182,16 @@ export default props => {
           y: e.pageY - rel.y
         })
       }}
-      onMouseOut={() => {
+      onMouseOut={e => {
         if (glow) {
           setGlow(false);
+        }
+        if (grabbed) {
+          console.log('ya did it')
+          setPos({
+            x: e.pageX - rel.x,
+            y: e.pageY - rel.y
+          })
         }
       }}
       onClick={() => {
